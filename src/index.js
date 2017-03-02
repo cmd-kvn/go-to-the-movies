@@ -13,10 +13,12 @@ elements require wrapping them in a parent.
 //   * `loading` - indicates app should display "loading" info
 //   * `movies` - the list of movies to display
 function App(props) {
+
   if (props.loading) {
     return <Loader />;
   }
   const movieStats = props.movies.map(movie => (
+    /* Call component 'MovieStat' and put 'key' and 'movie' on the 'props' input */
     <MovieStat
       key={movie.imdbID} // * Use `key` to track list items
       movie={movie}
@@ -34,9 +36,12 @@ function App(props) {
 function MovieStat(props) {
   // React elements which take up multiple lines need to be wrapped in '()'
   return (
-    <p>
-      Movie title: {props.movie.Title}
-    </p>
+    <div>
+      <p>
+        Movie title: {props.movie.Title}
+      </p>
+      <img src={props.movie.Poster} />
+    </div>
   );
 }
 
@@ -55,11 +60,14 @@ ReactDOM.render(
 );
 
 fetch('http://www.omdbapi.com/?s=Space+Jam&plot=full&r=json')
-  .then(res => res.json())
-  .then(json => {
-    const movies = json.Search; // this is the value for the 'movies' key that's put on 'props'
+  .then(res => res.json() )
+  .then(returnObj => {
+    console.log(returnObj);
+    // returnObj.Search accesses the value that points to the array of returned API movies
+    const movies = returnObj.Search; // this is the value for the 'movies' key that's put on 'props'
     ReactDOM.render(
       /* Call component 'App' and put 'movies' and 'loading' on the 'props' input */ 
+      // if 'loading={true}' App returns <Loader /> and exits, 'movies' doesn't render
       <App movies={movies} loading={false} />, 
       document.getElementById('root')
     );

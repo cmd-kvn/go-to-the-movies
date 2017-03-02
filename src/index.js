@@ -17,17 +17,24 @@ function App(props) {
   if (props.loading) {
     return <Loader />;
   }
-  const movieStats = props.movies.map(movie => (
-    /* Call component 'MovieStat' and put 'key' and 'movie' on the 'props' input */
-    <MovieStat
-      key={movie.imdbID} // * Use `key` to track list items
-      movie={movie}
-    />
-  ));
+
+  const laLaLand = <MovieStat key={props.movies[0].imdbID} movie={props.movies[0]} />;
+  const moonlight = <MovieStat key={props.movies[1].imdbID} movie={props.movies[1]} />;
+
   return (
     <div>
-      <h1>lab1</h1>
-      {movieStats}
+      <div>
+        <h1>And the Oscar goes to...</h1>
+        {laLaLand}
+      </div>
+
+      <h3 className='center'>wait</h3>
+      <h2 className='center'>wait</h2>
+      <h1 className='center'><i>wait</i></h1>
+      <div>
+        <h1>There's been a mistake. The Oscar for best picture is...</h1>
+        {moonlight}
+      </div>
     </div>
   );
 }
@@ -38,9 +45,9 @@ function MovieStat(props) {
   return (
     <div>
       <p>
-        Movie title: {props.movie.Title}
+        <strong><i>{props.movie.Title}</i></strong>, directed by {props.movie.Director}, written by {props.movie.Writer}
       </p>
-      <img src={props.movie.Poster} />
+      <img src={props.movie.Poster} alt='{props.movie.Title} poster'/>
     </div>
   );
 }
@@ -59,12 +66,12 @@ ReactDOM.render(
   document.getElementById('root')
 );
 
-fetch('http://www.omdbapi.com/?s=Space+Jam&plot=full&r=json')
-  .then(res => res.json() )
-  .then(returnObj => {
-    console.log(returnObj);
-    // returnObj.Search accesses the value that points to the array of returned API movies
-    const movies = returnObj.Search; // this is the value for the 'movies' key that's put on 'props'
+Promise.all([
+fetch('http://www.omdbapi.com/?t=la+la+land&plot=full&r=json').then(res => res.json()),
+fetch('http://www.omdbapi.com/?t=moonlight&plot=full&r=json').then(res => res.json())
+])
+  .then(moviesArr => {
+    const movies = moviesArr; // this is the value for the 'movies' key that's put on 'props'
     ReactDOM.render(
       /* Call component 'App' and put 'movies' and 'loading' on the 'props' input */ 
       // if 'loading={true}' App returns <Loader /> and exits, 'movies' doesn't render
